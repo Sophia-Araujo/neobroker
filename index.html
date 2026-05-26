@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="NeoBroker — Plataforma de Investimentos Híbrida (Criptomoedas + Bolsa de Valores). Projeto Acadêmico de Padrões de Projeto GoF." />
+  <meta name="author" content="NeoBroker — Padrões de Projeto GoF" />
+  <title>NeoBroker — Plataforma de Investimentos</title>
+
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+
+<body>
+
+  <!-- ============================================================
+       HEADER FIXO com Efeito Blur (backdrop-filter)
+       ============================================================ -->
+  <header class="header" role="banner" id="main-header">
+    <!-- Logotipo -->
+    <div class="header__logo">
+      <div class="header__logo-mark" aria-hidden="true">NB</div>
+      <span>NeoBroker</span>
+    </div>
+
+    <!-- Navegação Principal (desktop) -->
+    <nav class="header__nav" role="navigation" aria-label="Menu principal">
+      <span class="header__nav-item active" role="menuitem">Dashboard</span>
+      <span class="header__nav-item" role="menuitem">Mercado</span>
+      <span class="header__nav-item" role="menuitem">Portfólio</span>
+      <span class="header__nav-item" role="menuitem">Histórico</span>
+    </nav>
+
+    <!-- Ações do Header -->
+    <div class="header__actions">
+      <!-- Chip de saldo rápido (desktop) -->
+      <div class="header__balance-chip" aria-label="Saldo disponível" title="Saldo em conta">
+        <span class="header__balance-dot" aria-hidden="true"></span>
+        <span id="header-balance">R$ 100.000,00</span>
+      </div>
+
+      <!-- Botão de refresh manual -->
+      <button class="btn btn--ghost btn--icon" id="refresh-btn"
+              aria-label="Atualizar preços"
+              title="Atualizar cotações">
+        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M7.5 1C4.5 1 2 3.5 2 6.5c0 1.5.6 2.8 1.5 3.8L2 11.8l1.2 1.2 1.5-1.5c1 .9 2.4 1.5 3.8 1.5 3 0 5.5-2.5 5.5-5.5S10.5 1 7.5 1zM7.5 12c-3 0-5-2-5-5.5S4.5 1 7.5 1" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/>
+        </svg>
+        ↺
+      </button>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       LAYOUT PRINCIPAL DA APLICAÇÃO
+       ============================================================ -->
+  <div class="app-layout">
+    <div class="container">
+
+      <!-- ====================================================
+           BANNER DE PADRÕES DE PROJETO (Didático)
+           Indica quais padrões GoF estão ativos nesta tela
+           ==================================================== -->
+      <section class="patterns-banner" aria-label="Padrões de projeto ativos">
+        <div class="pattern-chip pattern-chip--adapter" title="Converte dados de APIs diferentes em um único formato">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <rect x="1" y="4" width="4" height="4" rx="1" fill="currentColor" opacity=".6"/>
+            <rect x="7" y="4" width="4" height="4" rx="1" fill="currentColor"/>
+            <path d="M5 6h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Adapter — Normalização de APIs
+        </div>
+        <div class="pattern-chip pattern-chip--proxy" title="Intercepta requisições e aplica cache de 30 segundos">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <circle cx="6" cy="6" r="4" stroke="currentColor" stroke-width="1.5" fill="none"/>
+            <circle cx="6" cy="6" r="2" fill="currentColor"/>
+          </svg>
+          Proxy — Cache de 30s
+        </div>
+        <div class="pattern-chip pattern-chip--facade" title="Simplifica compra/venda coordenando saldo, portfólio e histórico">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+            <rect x="1" y="1" width="10" height="3" rx="1" fill="currentColor" opacity=".4"/>
+            <rect x="1" y="5" width="10" height="2" rx="1" fill="currentColor" opacity=".65"/>
+            <rect x="1" y="8" width="10" height="3" rx="1" fill="currentColor"/>
+          </svg>
+          Facade — Operações Unificadas
+        </div>
+      </section>
+
+      <!-- ====================================================
+           SEÇÃO HERO — Patrimônio Total
+           ==================================================== -->
+      <section class="hero" aria-labelledby="hero-heading">
+
+        <div class="hero__content">
+          <!-- Badge de mercado ativo -->
+          <div class="hero__eyebrow" role="status" aria-live="polite">
+            Mercado Aberto
+          </div>
+
+          <p class="hero__label">Patrimônio Total</p>
+
+          <!-- Valor principal — atualizado pelo app.js via animação -->
+          <h1 class="hero__value" id="total-patrimony" aria-label="Valor do patrimônio total" data-current-value="0">
+            R$ 100.000,00
+          </h1>
+
+          <!-- Cards de métricas rápidas -->
+          <div class="hero__stats" role="list" aria-label="Resumo financeiro">
+
+            <div class="hero__stat" role="listitem">
+              <span class="hero__stat-label">Saldo Disponível</span>
+              <span class="hero__stat-value" id="available-balance">R$ 100.000,00</span>
+            </div>
+
+            <div class="hero__stat" role="listitem">
+              <span class="hero__stat-label">Em Carteira</span>
+              <span class="hero__stat-value" id="portfolio-value">R$ 0,00</span>
+            </div>
+
+            <div class="hero__stat" role="listitem">
+              <span class="hero__stat-label">Ativos</span>
+              <span class="hero__stat-value" id="asset-count">0 ativos</span>
+            </div>
+
+          </div>
+        </div>
+
+      </section><!-- /hero -->
+
+      <!-- ====================================================
+           GRID PRINCIPAL: Cards de Ativos + Painel Lateral
+           ==================================================== -->
+      <div class="main-grid">
+
+        <!-- --------------------------------------------------
+             COLUNA ESQUERDA: Grid de Cards de Ativos
+             -------------------------------------------------- -->
+        <section aria-labelledby="assets-heading">
+
+          <!-- Barra de controles acima do grid -->
+          <div class="controls-bar">
+            <h2 class="controls-bar__title" id="assets-heading">
+              Mercado em Tempo Real
+            </h2>
+            <div class="controls-bar__right">
+              <!--
+                PROXY em ação: este badge mostra se a última
+                chamada retornou do cache (HIT) ou buscou
+                dados frescos (MISS) no serviço real.
+              -->
+              <span class="cache-badge cache-badge--miss"
+                    id="cache-status-badge"
+                    title="Status do cache do Proxy"
+                    aria-label="Status do cache">
+                <span id="cache-status-text">Buscando dados...</span>
+              </span>
+
+              <!-- Barra de progresso do tempo restante de cache -->
+              <div class="cache-bar" role="progressbar" aria-label="Tempo restante no cache">
+                <div class="cache-bar__fill miss" id="cache-progress-bar"></div>
+              </div>
+            </div>
+          </div>
+
+          <!--
+            GRID DE CARDS — populada dinamicamente pelo app.js
+            Os dados chegam aqui já no formato padrão (via ADAPTER)
+            e possivelmente do cache (via PROXY)
+          -->
+          <div class="assets-grid" id="assets-grid" role="list" aria-label="Lista de ativos disponíveis">
+            <!-- Cards injetados via renderAssetCards() em app.js -->
+            <p class="loading-text" role="status" aria-busy="true">
+              Carregando ativos...
+            </p>
+          </div>
+
+        </section><!-- /coluna-esquerda -->
+
+        <!-- --------------------------------------------------
+             COLUNA DIREITA: Painel Lateral (Histórico + Portfólio)
+             -------------------------------------------------- -->
+        <aside class="side-panel" aria-label="Painel de investimentos">
+
+          <!-- Tabs de navegação do painel -->
+          <div class="panel-tabs" role="tablist" aria-label="Seções do painel">
+            <button class="panel-tab active"
+                    role="tab"
+                    data-target="history-section"
+                    aria-selected="true"
+                    aria-controls="history-section">
+              Transações
+            </button>
+            <button class="panel-tab"
+                    role="tab"
+                    data-target="portfolio-section"
+                    aria-selected="false"
+                    aria-controls="portfolio-section">
+              Minha Carteira
+            </button>
+          </div>
+
+          <!-- ==========================================
+               TAB 1: Histórico de Transações
+               As transações são registradas pela FACADE
+               ========================================== -->
+          <section class="panel-section active"
+                   id="history-section"
+                   role="tabpanel"
+                   aria-label="Histórico de transações">
+            <ul class="history-list" id="history-list" aria-live="polite" aria-relevant="additions">
+              <!-- Itens injetados via renderTransactionHistory() em app.js -->
+              <li class="history-empty" role="status">
+                <span>Nenhuma transação ainda.</span>
+                <small>Comece comprando um ativo!</small>
+              </li>
+            </ul>
+          </section>
+
+          <!-- ==========================================
+               TAB 2: Portfólio do Usuário
+               Gerenciado internamente pela FACADE
+               ========================================== -->
+          <section class="panel-section"
+                   id="portfolio-section"
+                   role="tabpanel"
+                   aria-label="Portfólio de investimentos">
+
+            <!-- Estado vazio do portfólio -->
+            <div class="portfolio-empty" id="portfolio-empty" style="display:flex;" aria-live="polite">
+              <div class="portfolio-empty-icon" aria-hidden="true">📦</div>
+              <p>Sua carteira está vazia.</p>
+              <p>Compre ativos para começar!</p>
+            </div>
+
+            <!-- Lista de ativos na carteira -->
+            <ul class="portfolio-list" id="portfolio-list" aria-label="Ativos na carteira">
+              <!-- Itens injetados via renderPortfolio() em app.js -->
+            </ul>
+
+          </section>
+
+        </aside><!-- /side-panel -->
+
+      </div><!-- /main-grid -->
+
+    </div><!-- /container -->
+  </div><!-- /app-layout -->
+
+  <!-- ============================================================
+       MODAL DE COMPRA/VENDA
+       Ativado ao clicar nos botões dos cards de ativos.
+       Ao confirmar, a FACADE é chamada para coordenar a operação.
+       ============================================================ -->
+  <div class="modal-overlay"
+       id="trade-modal"
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-title"
+       aria-hidden="true">
+
+    <!-- Backdrop clicável para fechar -->
+    <div class="modal-backdrop" id="modal-backdrop" aria-hidden="true"></div>
+
+    <!-- Diálogo do Modal -->
+    <div class="modal-dialog">
+
+      <!-- Handle (mobile) -->
+      <div class="modal-handle" aria-hidden="true"></div>
+
+      <!-- Cabeçalho do Modal -->
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Comprar Ativo</h2>
+        <button class="modal-close"
+                id="modal-close"
+                aria-label="Fechar modal">
+          ✕
+        </button>
+      </div>
+
+      <!-- Info do Ativo Selecionado -->
+      <div class="modal-asset-info" aria-live="polite">
+        <span class="modal-asset-name" id="modal-asset-name">—</span>
+        <span class="modal-asset-price" id="modal-asset-price">—</span>
+      </div>
+
+      <!-- Posição Atual (se existir na carteira) -->
+      <div class="modal-holding-info" id="modal-holding-info" style="display:none;" role="status">
+        <span class="label">📦 Na carteira:</span>
+        <span class="holding-qty">—</span>
+      </div>
+
+      <!--
+        Formulário de Operação.
+        O submit é capturado pelo app.js que chama:
+        ✅ investmentFacade.buyAsset() ou investmentFacade.sellAsset()
+        A FACADE cuida do saldo + portfólio + histórico internamente.
+      -->
+      <form id="trade-form" novalidate>
+
+        <!-- Campo oculto: tipo de operação -->
+        <input type="hidden" id="modal-action-type" value="buy" />
+
+        <!-- Campo: Quantidade -->
+        <div class="form-group">
+          <label class="form-label" for="modal-quantity">
+            Quantidade
+          </label>
+          <input class="form-input"
+                 type="number"
+                 id="modal-quantity"
+                 name="quantity"
+                 min="0.00000001"
+                 step="any"
+                 placeholder="Ex: 0.5"
+                 autocomplete="off"
+                 aria-describedby="quantity-hint"
+                 required />
+          <small id="quantity-hint" class="sr-only">
+            Informe a quantidade de ativos que deseja negociar.
+          </small>
+        </div>
+
+        <!-- Exibição do Total Estimado -->
+        <div class="modal-total-row" aria-live="polite" aria-atomic="true">
+          <span class="modal-total-label">Total estimado</span>
+          <span class="modal-total-value" id="modal-total">R$ 0,00</span>
+        </div>
+
+        <!-- Botão de Confirmação -->
+        <button type="submit"
+                class="btn btn--buy btn--full"
+                id="modal-submit">
+          ✓ Confirmar Compra
+        </button>
+
+      </form>
+
+    </div><!-- /modal-dialog -->
+  </div><!-- /modal-overlay -->
+
+  <!-- ============================================================
+       ÁREA DE NOTIFICAÇÕES (Toast)
+       ============================================================ -->
+  <div id="notification-area" role="region" aria-label="Notificações" aria-live="assertive"></div>
+
+  <!-- ============================================================
+       SCRIPTS — ORDEM IMPORTA (dependências primeiro)
+       ============================================================
+
+       Ordem de carregamento:
+       1. AssetAdapter.js  → Define RawAssetService, CryptoAdapter, StockAdapter
+       2. PriceServiceProxy.js → Define CachedAssetServiceProxy (usa RawAssetService)
+       3. InvestmentFacade.js  → Define InvestmentFacade (independente)
+       4. app.js           → Orquestra tudo (usa todos os módulos acima)
+       ============================================================ -->
+
+  <!-- 1️⃣ ADAPTER: Normaliza dados de APIs diferentes -->
+  <script src="js/adapters/AssetAdapter.js"></script>
+
+  <!-- 2️⃣ PROXY: Cache de 30 segundos para requisições de preço -->
+  <script src="js/proxies/PriceServiceProxy.js"></script>
+
+  <!-- 3️⃣ FACADE: Interface única para comprar/vender ativos -->
+  <script src="js/facades/InvestmentFacade.js"></script>
+
+  <!-- 4️⃣ APP.JS: Orquestrador principal -->
+  <script src="js/app.js"></script>
+
+  <!-- Script auxiliar: efeito de scroll no header -->
+  <script>
+    const header = document.getElementById('main-header');
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+  </script>
+
+</body>
+</html>
